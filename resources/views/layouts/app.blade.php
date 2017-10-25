@@ -72,6 +72,12 @@
         </div>
     </nav>
 
+    @if(Session::has('success'))
+        <div class="container">
+            <div class="alert alert-success"><em> {!! session('success') !!}</em></div>
+        </div>
+    @endif
+
     {{--
     @if(Session::has('errors'))
         <div class="container">

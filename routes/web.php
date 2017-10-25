@@ -23,4 +23,6 @@ Route::resource('roles', 'RoleController');
 
 Route::resource('permissions', 'PermissionController');
 
+Route::resource('categories', 'CategoriesController');
+
 Route::resource('objects', 'ObjectController');
