@@ -18,6 +18,11 @@ use Intervention\Image\Facades\Image;
 
 class ObjectController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'isVerified']);
+        //isAdmin middleware lets only users with a //specific permission to access these resources
+    }
     /**
      * Display a listing of the resource.
      *
@@ -113,7 +118,7 @@ class ObjectController extends Controller
             'description' => 'required',
             'price' => 'required|numeric|between:0,999.99',
             'currency_id' => 'required',
-            'photo.*' => 'image|mimes:jpeg,jpg,bmp,png'
+            'photo.*' => 'image|mimes:jpeg,jpg,png,gif,bmp'
         ]);
 
 
