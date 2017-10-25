@@ -35,7 +35,7 @@
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
                     @if (!Auth::guest())
-                        <li><a href="{{ route('objects.step1') }}">New Object</a></li>
+                        <li><a href="{{ route('objects.manage') }}">New Object</a></li>
                     @endif
                 </ul>
 
@@ -59,8 +59,13 @@
 
     @if(Session::has('success'))
         <div class="container">
-            <div class="alert alert-success"><em> {!! session('success') !!}</em>
-            </div>
+            <div class="alert alert-success"><em> {!! session('success') !!}</em></div>
+        </div>
+    @endif
+
+    @if(Session::has('error'))
+        <div class="container">
+            <div class="alert alert-danger"><em> {!! session('error') !!}</em></div>
         </div>
     @endif
 

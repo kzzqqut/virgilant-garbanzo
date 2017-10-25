@@ -34,7 +34,7 @@ class LoginController extends Controller
             return redirect()->route('users.index');
         }
 
-        return redirect()->route('objects.create');
+        return redirect()->route('objects.manage');
     }
 
     /**

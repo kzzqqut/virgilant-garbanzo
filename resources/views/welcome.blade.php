@@ -75,7 +75,7 @@
                         @endrole
 
                         @role('Verified')
-                            <a href="{{ route('objects.create') }}">New object</a>
+                            <a href="{{ route('objects.manage') }}">New object</a>
                         @endrole
                     @else
                         <a href="{{ route('login') }}">Login</a>

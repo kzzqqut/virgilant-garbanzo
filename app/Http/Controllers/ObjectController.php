@@ -26,13 +26,46 @@ class ObjectController extends Controller
         //
     }
 
-    public function step1() {
+    public function manage($id = null) {
 
-        $object = session('object');
+        $objectSession = session('object');
+
+        if (!empty($id)) {
+
+            $object = Objects::findOrFail($id);
+            //if (empty($object->id))
+
+            if (!empty($objectSession->id) && $object->id != $objectSession->id) {
+                session(['object' => null]);
+            } elseif (!empty($objectSession->id) && $object->id == $objectSession->id) {
+                $object->main_id = $objectSession->main_id;
+                $object->category_id = $objectSession->category_id;
+                $object->subcategory_id = $objectSession->subcategory_id;
+
+            }
+
+            session(['object' => $object]);
+
+        } else {
+            $object = new Objects();
+            if (!empty($objectSession->main_id)) {
+                $object->main_id = $objectSession->main_id;
+            }
+            if (!empty($objectSession->category_id)) {
+                $object->category_id = $objectSession->category_id;
+            }
+            if (!empty($objectSession->subcategory_id)) {
+                $object->subcategory_id = $objectSession->subcategory_id;
+            }
+            session(['object' => $object]);
+        }
+
         if (empty($object)) {
             $object = new Objects();
         }
 
+        //dd($object);
+        //dd($objectSession);
 
         $subcategory = null;
         if (!empty($object->subcategory_id)) {
@@ -50,12 +83,64 @@ class ObjectController extends Controller
             $mainCategory = Categories::find($object->main_id);
         }
 
+        $currencies = Currencies::all();
 
-        return view('objects.step1',['subcategory' => $subcategory,'category' => $category, 'mainCategory' => $mainCategory]);
+
+        return view('objects.create_edit',[
+            'object' => $object,
+            'subcategory' => $subcategory,
+            'category' => $category,
+            'mainCategory' => $mainCategory,
+            'currencies' => $currencies
+        ]);
 
     }
 
-    public function postStep1(Request $request) {
+    public function postManage(Request $request, $id = null) {
+
+        $objectSession = $request->session()->get('object');
+
+        if (empty($objectSession->main_id) || empty($objectSession->category_id) || empty($objectSession->subcategory_id)) {
+            return redirect()->back()->with(['error' => 'Please select category']);
+        }
+
+        $this->validate($request,[
+            'name' => 'required|min:6|max:120',
+            'description' => 'required',
+            'price' => 'required|numeric|between:0,999.99',
+            'currency_id' => 'required'
+        ]);
+
+        $object = null;
+        if (!empty($id)) {
+            $object = Objects::findOrFail($id);
+        } else {
+            $object = new Objects();
+        }
+
+
+
+        $object->main_id = $objectSession->main_id;
+        $object->category_id = $objectSession->category_id;
+        $object->subcategory_id = $objectSession->subcategory_id;
+
+        $object->user_id = Auth::user()->id;
+        $object->name = $request['name'];
+        $object->description = $request['description'];
+        $object->price = $request['price'];
+        $object->currency_id = $request['currency_id'];
+
+        $object->save();
+
+        $request->session()->put('object', $object);
+
+        $message = 'Object saved successfully!';
+
+        return redirect()->route('objects.manage',['id' => $object->id])->with(['success' => $message]);
+
+    }
+
+    public function postCategory(Request $request) {
 
         $object = $request->session()->get('object');
         if (empty($object)) {
@@ -74,15 +159,19 @@ class ObjectController extends Controller
         }
         if (!empty($request['subcategory'])) {
             $object->subcategory_id = $request['subcategory'];
-
         }
 
         $request->session()->put('object', $object);
 
-        return redirect()->route('objects.step1');
+        if (!empty($object->id)) {
+            return redirect()->route('objects.manage',['id' => $object->id]);
+        }
+
+        return redirect()->route('objects.manage');
     }
 
-    public function changeCategory($type) {
+    public function changeCategory($type)
+    {
 
         $object = session('object');
 
@@ -103,118 +192,14 @@ class ObjectController extends Controller
             }
             session(['object' => $object]);
 
-            return redirect()->route('objects.step1');
+            if (!empty($object->id)) {
+                return redirect()->route('objects.manage', ['id' => $object->id]);
+            }
+
+            return redirect()->route('objects.manage');
 
         } else {
-            return redirect()->route('objects.step1')->with(['error' => 'Nothing for change. Contact Administrator']);
+            return redirect()->route('objects.manage')->with(['error' => 'Nothing for change. Contact Administrator']);
         }
-
-
-
-    }
-
-
-    public function step2()
-    {
-        $currencies = Currencies::all();
-        return view('objects.step2',compact('currencies'));
-    }
-
-    public function postStep2($id = null) {
-        return redirect()->route('objects.step2');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $this->validate($request,[
-            'name' => 'required|min:6|max:120',
-            'description' => 'required',
-            'price' => 'required|numeric|between:0,999.99',
-            'currency_id' => 'required'
-        ]);
-
-        $category = Categories::findOrFail($request['category_id']);
-
-        $object = new Objects();
-        $object->user_id = Auth::user()->id;
-        $object->name = $request['name'];
-        $object->description = $request['description'];
-        $object->price = $request['price'];
-        $object->currency_id = $request['currency_id'];
-
-        if ($category->parent_id == 0 && $category->type == 'main') {
-            $object->main_id = $category->id;
-        } elseif ($category->type == 'category') {
-            $object->category_id = $category->id;
-            $mainCategory = Categories::findOrFail($category->parent_id);
-            $object->main_id = $mainCategory->id;
-
-        } elseif ($category->type == 'subcategory') {
-            $catCategory = Categories::findOrFail($category->parent_id);
-            $object->category_id = $catCategory->id;
-            $mainCategory = Categories::findOrFail($catCategory->parent_id);
-            $object->main_id = $mainCategory->id;
-            $object->subcategory_id = $category->id;
-        }
-
-        $object->save();
-
-        return redirect()->route('objects.index')->with(['success' => 'Object added successfully!']);
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        echo 'show';
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
-    public function choseCategory(Request $request) {
-        //
     }
 }
