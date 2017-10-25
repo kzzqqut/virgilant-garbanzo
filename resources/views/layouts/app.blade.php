@@ -12,7 +12,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
     <!-- Scripts -->
@@ -46,25 +46,12 @@
                         <li><a href="{{ route('login') }}">Login</a></li>
                         <li><a href="{{ route('register') }}">Register</a></li>
                     @else
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                {{ Auth::user()->name }} <span class="caret"></span>
-                            </a>
-
-                            <ul class="dropdown-menu" role="menu">
-                                <li>
-                                    @role('Admin') {{-- Laravel-permission blade helper --}}
-                                    <a href="#"><i class="fa fa-btn fa-unlock"></i>Admin</a>
-                                    @endrole
-                                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                        Logout
-                                    </a>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                        {{ csrf_field() }}
-                                    </form>
-                                </li>
-                            </ul>
+                        <li style="padding-top: 12px;">
+                            Hello {{ Auth::user()->name }}
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: inline">
+                                {{ csrf_field() }}
+                                <button type="submit" class="btn-link">Logout</button>
+                            </form>
                         </li>
                     @endif
                 </ul>
@@ -93,7 +80,16 @@
         </div>
     </div>
 
-    @yield('content')
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+                @include('layouts.admin_navigation')
+            </div>
+            <div class="col-md-10">
+                @yield('content')
+            </div>
+        </div>
+    </div>
 
 </div>
 

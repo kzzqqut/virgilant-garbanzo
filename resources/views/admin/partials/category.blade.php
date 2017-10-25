@@ -1,8 +1,10 @@
 <li>{{ $category['name'] }}
-    <a href="{{ route('categories.edit',['id' => $category['id']]) }}" class="btn btn-sm">Edit</a>
+
     @if ($category['parent_id'] != 0)
-        {!! Form::open(['method' => 'DELETE', 'route' => ['categories.destroy', $category['id']] ]) !!}
-        {!! Form::submit('Delete', ['class' => 'btn btn-sm']) !!}
+        <a href="{{ route('categories.edit',['id' => $category['id']]) }}" class="btn btn-sm">Edit</a>
+
+        {!! Form::open(['method' => 'DELETE', 'route' => ['categories.destroy', $category['id']], 'style' => 'display:inline' ]) !!}
+        {!! Form::submit('Delete', ['class' => 'btn-sm btn-link']) !!}
         {!! Form::close() !!}
     @endif
 </li>
