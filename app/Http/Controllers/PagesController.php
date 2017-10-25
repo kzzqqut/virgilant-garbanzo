@@ -46,8 +46,12 @@ class PagesController extends Controller {
         }
 
         return $this->getIndexResult($objects);
+    }
 
+    public function details($id) {
+        $object = Objects::findOrFail($id);
 
+        return view('details',['object' => $object]);
     }
 
     private function getIndexResult($objects) {

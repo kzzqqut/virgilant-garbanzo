@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', '| Rostra objects list')
+@section('title', '| Laravel objects list')
 
 @section('content')
 
@@ -18,13 +18,13 @@
                         @foreach($objects as $key => $object)
                             <div class="col-md-3">
                                 @if (!empty($object->mainPhoto))
-                                    <a href="#">
+                                    <a href="{{ route('details',['id' => $object->id]) }}">
                                         <img src="/images/{{ $object->mainPhoto->th_name }}">
                                     </a>
                                 @else
                                     <p>No photo</p>
                                 @endif
-                                <p><a href="#">{{ $object->name }}</a></p>
+                                <p><a href="{{ route('details',['id' => $object->id]) }}">{{ $object->name }}</a></p>
                             </div>
                             @if ($key != 0 && ($key+1)%4 == 0)
                                 <div class="clearfix"></div>

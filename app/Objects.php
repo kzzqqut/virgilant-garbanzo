@@ -39,4 +39,8 @@ class Objects extends Model
     public function mainPhoto() {
         return $this->hasOne('App\Photos','object_id')->where('is_main',1);
     }
+
+    public function type() {
+        return $this->belongsTo('App\Types');
+    }
 }

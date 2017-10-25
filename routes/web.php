@@ -63,3 +63,8 @@ Route::delete('/objects/{object}',[
     'uses' => 'ObjectController@destroy',
     'as' => 'objects.destroy'
 ]);
+
+Route::get('/details/{id}',[
+    'uses' => 'PagesController@details',
+    'as' => 'details'
+]);
