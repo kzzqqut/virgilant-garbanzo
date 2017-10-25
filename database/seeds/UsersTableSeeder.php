@@ -39,7 +39,7 @@ class UsersTableSeeder extends Seeder
 
 
         $user = new \App\User();
-        $user->name = 'SimpleUser';
+        $user->name = 'user';
         $user->email = 'user@example.org';
         $user->password = bcrypt('qwerty123');
         $user->plain = 'qwerty123';
@@ -50,7 +50,12 @@ class UsersTableSeeder extends Seeder
         $permission->save();
 
         $role = new Role();
-        $role->name = 'VerifiedUser';
+        $role->name = 'SimpleUser';
+        $role->save();
+        $role->givePermissionTo($permission);
+
+        $role = new Role();
+        $role->name = 'Verified';
         $role->save();
         $role->givePermissionTo($permission);
 

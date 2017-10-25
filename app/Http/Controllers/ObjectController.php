@@ -26,18 +26,102 @@ class ObjectController extends Controller
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $main = Categories::where('parent_id',1)->get()->pluck('name','id')->toArray();
-        $default = Categories::where('parent_id',2)->get()->pluck('name','id')->toArray();
-        $currencies = Currencies::all()->pluck('name','id');
+    public function step1() {
 
-        return view('objects.create',['main' => $main,'default' => $default,'currencies' => $currencies]);
+        $object = session('object');
+        if (empty($object)) {
+            $object = new Objects();
+        }
+
+
+        $subcategory = null;
+        if (!empty($object->subcategory_id)) {
+            $subcategory = Categories::find($object->subcategory_id);
+        }
+
+
+        $category = null;
+        if (!empty($object->category_id)) {
+            $category = Categories::find($object->category_id);
+        }
+
+        $mainCategory = null;
+        if (!empty($object->main_id)) {
+            $mainCategory = Categories::find($object->main_id);
+        }
+
+
+        return view('objects.step1',['subcategory' => $subcategory,'category' => $category, 'mainCategory' => $mainCategory]);
+
+    }
+
+    public function postStep1(Request $request) {
+
+        $object = $request->session()->get('object');
+        if (empty($object)) {
+            $object = new Objects();
+        }
+
+        if (!empty($request['main'])) {
+            $object->main_id = $request['main'];
+            $object->category_id = null;
+            $object->subcategory_id = null;
+        }
+        if (!empty($request['category'])) {
+            $object->category_id = $request['category'];
+            $object->subcategory_id = null;
+
+        }
+        if (!empty($request['subcategory'])) {
+            $object->subcategory_id = $request['subcategory'];
+
+        }
+
+        $request->session()->put('object', $object);
+
+        return redirect()->route('objects.step1');
+    }
+
+    public function changeCategory($type) {
+
+        $object = session('object');
+
+        if (!empty($object)) {
+            switch ($type) {
+                case 'main' :
+                    $object->main_id = null;
+                    $object->category_id = null;
+                    $object->subcategory_id = null;
+                    break;
+                case 'category' :
+                    $object->category_id = null;
+                    $object->subcategory_id = null;
+                    break;
+                case 'subcategory' :
+                    $object->subcategory_id = null;
+                    break;
+            }
+            session(['object' => $object]);
+
+            return redirect()->route('objects.step1');
+
+        } else {
+            return redirect()->route('objects.step1')->with(['error' => 'Nothing for change. Contact Administrator']);
+        }
+
+
+
+    }
+
+
+    public function step2()
+    {
+        $currencies = Currencies::all();
+        return view('objects.step2',compact('currencies'));
+    }
+
+    public function postStep2($id = null) {
+        return redirect()->route('objects.step2');
     }
 
     /**
@@ -82,6 +166,7 @@ class ObjectController extends Controller
         $object->save();
 
         return redirect()->route('objects.index')->with(['success' => 'Object added successfully!']);
+
     }
 
     /**
@@ -92,7 +177,7 @@ class ObjectController extends Controller
      */
     public function show($id)
     {
-        //
+        echo 'show';
     }
 
     /**
@@ -126,6 +211,10 @@ class ObjectController extends Controller
      */
     public function destroy($id)
     {
+        //
+    }
+
+    public function choseCategory(Request $request) {
         //
     }
 }

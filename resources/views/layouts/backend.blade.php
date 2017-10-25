@@ -35,7 +35,7 @@
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
                     @if (!Auth::guest())
-                        <li><a href="{{ route('objects.create') }}">New Object</a></li>
+                        <li><a href="{{ route('objects.step1') }}">New Object</a></li>
                     @endif
                 </ul>
 

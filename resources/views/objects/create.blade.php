@@ -10,9 +10,41 @@
                 <div class="panel-heading">Create new object</div>
 
                 <div class="panel-body">
+                    <form class="form-horizontal" action="{{ route('objects.category') }}" method="post">
+                        {{ csrf_field() }}
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="main">Chose main category</label>
+                            <div class="col-md-6">
+                                <select size="10" class="form-control" name="main">
+                                    @foreach( \App\Categories::where('type','main')->get() as $mainCategory)
+                                        <option {{ !empty(session('main') && session('main') == $mainCategory->id) ? 'selected' : '' }} value="{{ $mainCategory->id }}"> {{ $mainCategory->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        @if (!empty($categories))
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="category">Chose category</label>
+                                <div class="col-md-6">
+                                    <select size="10" class="form-control" name="category">
+                                        @foreach( $categories as $category)
+                                            <option {{ !empty(session('category') && session('category') == $category->id) ? 'selected' : '' }} value="{{ $category->id }}"> {{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="form-group">
+                            <div class="col-md-9 pull-right">
+                                <button type="submit" class="btn btn-primary">Chose</button>
+                            </div>
+                        </div>
+                    </form>
+
                     {{ Form::open(array('url' => 'objects','class' => 'form-horizontal')) }}
-
-
                     <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }}">
                         {{ Form::label('name', 'Name',['class' => 'control-label col-md-3','for' => 'name']) }}
                         <div class="col-md-6">
@@ -60,25 +92,6 @@
                             @endif
                         </div>
                     </div>
-
-                    <div class="form-group {{ $errors->has('category_id') ? ' has-error' : '' }}">
-                        {{ Form::label('category_id', 'Category',['class' => 'control-label col-md-3','for' => 'category_id']) }}
-                        <div class="col-md-6">
-                            {{ Form::select('category_id',[
-                                '1' => 'Main',
-                                'main' => $main,
-                                '2' => 'Default',
-                                'default' => $default,
-                                ],null, ['class' => 'form-control'])
-                            }}
-                            @if ($errors->has('category_id'))
-                                <span class="help-block">
-                                        <strong>{{ $errors->first('category_id') }}</strong>
-                                    </span>
-                            @endif
-                        </div>
-                    </div>
-
 
                     <div class="form-group">
                         <div class="col-md-9 pull-right">

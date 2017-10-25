@@ -74,7 +74,7 @@
                             <a href="{{ route('users.index') }}">Admin</a>
                         @endrole
 
-                        @role('VerifiedUser')
+                        @role('Verified')
                             <a href="{{ route('objects.create') }}">New object</a>
                         @endrole
                     @else

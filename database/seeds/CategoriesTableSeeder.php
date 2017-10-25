@@ -17,31 +17,27 @@ class CategoriesTableSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 1; $i <= 3; $i++) {
             $category = new \App\Categories();
-            $category->name = 'Category Parent - ' . $i;
+            $category->name = 'Category parent - ' . $i;
             $category->parent_id = 0;
             $category->type = 'main';
             $category->save();
             $id = $category->id;
-            if ($i == 1 || $i == 4 || $i == 7) {
-                for ($j = 0; $j < 10; $j++) {
-                    $category = new \App\Categories();
-                    $category->name = 'Category Child - ' . $j;
-                    $category->parent_id = $id;
-                    $category->type = 'category';
-                    $category->save();
-                    $id2 = $category->id;
-                    if ($j == 1 || $j == 4 || $j == 7) {
-                        for ($k = 0; $k < 10; $k++) {
-                            $category = new \App\Categories();
-                            $category->name = 'Category Grandchild - ' . $k;
-                            $category->parent_id = $id2;
-                            $category->type = 'subcategory';
-                            $category->save();
-                        }
 
-                    }
+            for ($j = 1; $j <= 3; $j++) {
+                $category = new \App\Categories();
+                $category->name = 'Category child - ' . $i .' - ' .$j;
+                $category->parent_id = $id;
+                $category->type = 'category';
+                $category->save();
+                $id2 = $category->id;
+                for ($k = 0; $k < 10; $k++) {
+                    $category = new \App\Categories();
+                    $category->name = 'Category subchild - ' . $i . ' - ' . $j . ' - ' . $k;
+                    $category->parent_id = $id2;
+                    $category->type = 'subcategory';
+                    $category->save();
                 }
             }
         }
