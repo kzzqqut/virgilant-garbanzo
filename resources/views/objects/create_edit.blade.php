@@ -132,6 +132,38 @@
                             </div>
                         </div>
 
+                        @if (!empty($subcategory) && !empty($subcategory->options->is_weight))
+                            <div class="form-group {{ $errors->has('weight') ? ' has-error' : '' }}">
+                                <label class="col-md-3 control-label" for="weight">Weight</label>
+                                <div class="col-md-6">
+                                    <input type="text" name="weight" value="{{ !empty($object->weight) ? $object->weight : '' }}" class="form-control">
+                                    @if ($errors->has('weight'))
+                                        <span class="help-block">
+                                        <strong>{{ $errors->first('weight') }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+
+                        @if (!empty($subcategory) && !empty($subcategory->options->is_types))
+                            <div class="form-group {{ $errors->has('type_id') ? ' has-error' : '' }}">
+                                <label class="col-md-3 control-label" for="type_id">Type</label>
+                                <div class="col-md-6">
+                                    <select name="type_id" class="form-control">
+                                        @foreach(\App\Types::all() as $type)
+                                            <option {{ !empty($object->type_id) && $object->type_id == $type->id ? 'selected' : '' }} value="{{ $type->id }}">{{ $type->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('type_id'))
+                                        <span class="help-block">
+                                        <strong>{{ $errors->first('type_id') }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+
                         <div class="form-group {{ $errors->has('photo') ? ' has-error' : '' }}">
                             <label class="col-md-3 control-label" for="photo">Photos</label>
                             <div class="col-md-6">

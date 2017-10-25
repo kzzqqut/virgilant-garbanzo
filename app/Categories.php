@@ -12,6 +12,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Categories extends Model
 {
+    public function options() {
+        return $this->hasOne('App\Options','category_id');
+    }
+
     public static function categoriesTree(array $categories, $parentId = 0) {
 
         $branch = array();

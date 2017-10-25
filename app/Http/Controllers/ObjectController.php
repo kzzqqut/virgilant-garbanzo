@@ -140,6 +140,15 @@ class ObjectController extends Controller
         $object->description = $request['description'];
         $object->price = $request['price'];
         $object->currency_id = $request['currency_id'];
+
+        if (!empty($request['weight'])) {
+            $object->weight = $request['weight'];
+        }
+
+        if (!empty($request['type_id'])) {
+            $object->type_id = $request['type_id'];
+        }
+
         $object->save();
 
         if ($request->hasFile('photo')) {

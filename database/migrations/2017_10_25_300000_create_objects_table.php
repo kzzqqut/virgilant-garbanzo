@@ -29,6 +29,8 @@ class CreateObjectsTable extends Migration
             $table->text('description');
             $table->decimal('price');
             $table->integer('currency_id');
+            $table->decimal('weight')->nullable();
+            $table->integer('type_id')->nullable();
             $table->timestamps();
         });
     }

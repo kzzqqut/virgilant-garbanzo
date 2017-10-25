@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Categories;
+use App\Options;
 use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
@@ -70,6 +71,8 @@ class CategoriesController extends Controller
         $category->name = $request['name'];
         $category->type = $type;
         $category->save();
+
+        $this->saveOptions($request['options'], $category);
 
         //Redirect to the categories.index view and display message
         return redirect()->route('categories.index')->with('success','Category successfully added.');
@@ -138,7 +141,22 @@ class CategoriesController extends Controller
 
         $category->save();
 
+        $this->saveOptions($request['options'], $category);
+
         return redirect()->route('categories.index')->with('success','Category successfully edited.');
+    }
+
+    private function saveOptions($options, Categories $category) {
+        Options::where('category_id', $category->id)->forceDelete();
+
+        if (!empty($options)) {
+            $option = new Options();
+            $option->category_id = $category->id;
+            foreach ($options as $key => $value) {
+                $option->{$key} = 1;
+            }
+            $option->save();
+        }
     }
 
     /**
