@@ -21,6 +21,7 @@ class CreateObjectsTable extends Migration
     {
         Schema::create('objects', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('user_id');
             $table->integer('main_id');
             $table->integer('category_id');
             $table->integer('subcategory_id');

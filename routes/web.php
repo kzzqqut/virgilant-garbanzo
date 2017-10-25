@@ -16,3 +16,11 @@ Route::get('/', function () {
 });
 
 Auth::routes();
+
+Route::resource('users', 'UserController');
+
+Route::resource('roles', 'RoleController');
+
+Route::resource('permissions', 'PermissionController');
+
+Route::resource('objects', 'ObjectController');
