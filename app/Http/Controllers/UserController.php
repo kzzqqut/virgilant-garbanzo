@@ -64,7 +64,8 @@ class UserController extends Controller
             'password'=>'required|min:6|confirmed'
         ]);
 
-        $user = User::create($request->only('email', 'name', 'password')); //Retrieving only the email and password data
+        //Retrieving only the email and password data
+        $user = User::create(['email' => $request['email'],'name' => $request['name'],'password' => bcrypt($request['password'])]);
 
         $roles = $request['roles']; //Retrieving the roles field
         //Checking if a role was selected
@@ -119,16 +120,28 @@ class UserController extends Controller
         $this->validate($request, [
             'name'=>'required|max:120',
             'email'=>'required|email|unique:users,email,'.$id,
-            'password'=>'required|min:6|confirmed'
         ]);
-        $input = $request->only(['name', 'email', 'password']); //Retreive the name, email and password fields
-        $roles = $request['roles']; //Retreive all roles
+        if (!empty($request['password'])) {
+            $this->validate($request, [
+                'password'=>'min:6|confirmed'
+            ]);
+        }
+        $input = $request->only(['name', 'email', 'password']); //Retrieve the name, email and password fields
+
+        if (!empty($input['password'])) {
+            $input['password'] = bcrypt($input['password']);
+        } else {
+            unset($input['password']);
+        }
+
+        //Retrieve all roles
+        $roles = $request['roles'];
         $user->fill($input)->save();
 
         if (isset($roles)) {
             $user->roles()->sync($roles);  //If one or more role is selected associate user to roles
         } else {
-            $user->roles()->detach(); //If no role is selected remove exisiting role associated to a user
+            $user->roles()->detach(); //If no role is selected remove existing role associated to a user
         }
         return redirect()->route('users.index')->with('success','User successfully edited.');
     }

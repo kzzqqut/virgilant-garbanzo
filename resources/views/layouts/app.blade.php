@@ -72,12 +72,14 @@
         </div>
     </nav>
 
+    {{--
     @if(Session::has('errors'))
         <div class="container">
             <div class="alert alert-success"><em> {!! session('errors') !!}</em>
             </div>
         </div>
     @endif
+    --}}
 
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
