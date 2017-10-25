@@ -44,8 +44,8 @@
 
                                 <div class="col-md-6">
                                     <select name="role" class="form-control">
-                                        <option value="Seller">Seller</option>
-                                        <option value="Buyer">Buyer</option>
+                                        <option value="SimpleUser">SimpleUser</option>
+                                        <option value="Verified">Verified</option>
                                     </select>
 
                                     @if ($errors->has('password'))

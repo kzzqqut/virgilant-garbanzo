@@ -36,6 +36,7 @@
                 <ul class="nav navbar-nav">
                     @if (!Auth::guest())
                         <li><a href="{{ route('objects.manage') }}">New Object</a></li>
+                        <li><a href="{{ route('objects.index') }}">My objects</a></li>
                     @endif
                 </ul>
 

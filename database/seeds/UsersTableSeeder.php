@@ -19,15 +19,12 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        $user = new \App\User();
-        $user->name = 'admin';
-        $user->email = 'admin@example.org';
-        $user->password = bcrypt('qwerty123');
-        $user->plain = 'qwerty123';
-        $user->save();
-
         $permission = new Permission();
         $permission->name = 'Roles & Permissions';
+        $permission->save();
+
+        $permission = new Permission();
+        $permission->name = 'Manage objects';
         $permission->save();
 
         $role = new Role();
@@ -35,8 +32,29 @@ class UsersTableSeeder extends Seeder
         $role->save();
         $role->givePermissionTo($permission);
 
-        $user->assignRole($role);
+        $role = new Role();
+        $role->name = 'Verified';
+        $role->save();
+        $role->givePermissionTo($permission);
 
+        $role = new Role();
+        $role->name = 'SimpleUser';
+        $role->save();
+        $role->givePermissionTo($permission);
+
+        $user = new \App\User();
+        $user->name = 'admin';
+        $user->email = 'admin@example.org';
+        $user->password = bcrypt('qwerty123');
+        $user->plain = 'qwerty123';
+        $user->save();
+
+        $user = new \App\User();
+        $user->name = 'tester';
+        $user->email = 'tester@example.org';
+        $user->password = bcrypt('qwerty123');
+        $user->plain = 'qwerty123';
+        $user->save();
 
         $user = new \App\User();
         $user->name = 'user';
@@ -44,20 +62,6 @@ class UsersTableSeeder extends Seeder
         $user->password = bcrypt('qwerty123');
         $user->plain = 'qwerty123';
         $user->save();
-
-        $permission = new Permission();
-        $permission->name = 'Manage objects';
-        $permission->save();
-
-        $role = new Role();
-        $role->name = 'SimpleUser';
-        $role->save();
-        $role->givePermissionTo($permission);
-
-        $role = new Role();
-        $role->name = 'Verified';
-        $role->save();
-        $role->givePermissionTo($permission);
 
         $user->assignRole($role);
     }

@@ -27,6 +27,11 @@ Route::resource('categories', 'CategoriesController');
 
 //Route::resource('objects', 'ObjectController');
 
+Route::get('/objects',[
+    'uses' => 'ObjectController@index',
+    'as' => 'objects.index'
+]);
+
 Route::get('/objects/manage/{id?}', [
     'uses' => 'ObjectController@manage',
     'as' => 'objects.manage'
@@ -50,4 +55,9 @@ Route::get('/objects/category/change/{type}',[
 Route::get('/objects/photo/remove/{id}',[
     'uses' => 'ObjectController@photoRemove',
     'as' => 'objects.photo.remove'
+]);
+
+Route::delete('/objects/{object}',[
+    'uses' => 'ObjectController@destroy',
+    'as' => 'objects.destroy'
 ]);

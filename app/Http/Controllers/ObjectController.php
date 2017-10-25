@@ -25,7 +25,9 @@ class ObjectController extends Controller
      */
     public function index()
     {
-        //
+        $objects = Auth::user()->objects()->paginate(5);
+
+        return view('objects.index',['objects' => $objects]);
     }
 
     public function manage($id = null) {
@@ -111,8 +113,9 @@ class ObjectController extends Controller
             'description' => 'required',
             'price' => 'required|numeric|between:0,999.99',
             'currency_id' => 'required',
-            'photo.*' => 'image|mimes:jpeg,jpg,png,gif'
+            'photo.*' => 'image|mimes:jpeg,jpg,bmp,png'
         ]);
+
 
         $object = null;
         if (!empty($id)) {
@@ -132,10 +135,11 @@ class ObjectController extends Controller
         $object->description = $request['description'];
         $object->price = $request['price'];
         $object->currency_id = $request['currency_id'];
-
         $object->save();
 
         if ($request->hasFile('photo')) {
+
+
             $files = $request->file('photo');
             $i = 0;
             foreach ($files as $file) {
@@ -211,8 +215,7 @@ class ObjectController extends Controller
         return redirect()->route('objects.manage');
     }
 
-    public function changeCategory($type)
-    {
+    public function changeCategory($type) {
 
         $object = session('object');
 
@@ -234,27 +237,37 @@ class ObjectController extends Controller
             session(['object' => $object]);
 
             if (!empty($object->id)) {
-                return redirect()->route('objects.manage', ['id' => $object->id]);
+                return redirect()->route('objects.manage',['id' => $object->id]);
             }
 
             return redirect()->route('objects.manage');
 
         } else {
-            return redirect()->route('objects.manage')->with(['error' => 'Nothing to change. Contact Administrator']);
+            return redirect()->route('objects.manage')->with(['error' => 'Nothing for change. Contact Administrator']);
         }
+
     }
 
-    public function photoRemove($id)
-    {
+    public function photoRemove($id) {
 
         $photo = Photos::findOrFail($id);
         if (!empty($photo->object) && !empty($photo->object->user) && ($photo->object->user->id == Auth::user()->id)) {
-            unlink(public_path() . '/images/' . $photo->name);
-            unlink(public_path() . '/images/' . $photo->th_name);
+            unlink(public_path() .'/images/' . $photo->name);
+            unlink(public_path() .'/images/' . $photo->th_name);
             $photo->forceDelete();
-            return redirect()->route('objects.manage', ['id' => $photo->object->id])->with(['success' => 'Photo removed']);
+            return redirect()->route('objects.manage',['id' => $photo->object->id])->with(['success' => 'Photo removed']);
         }
 
         return redirect()->back();
+
+    }
+
+    public function destroy($id) {
+
+        //Find a user with a given id and delete
+        $object = Objects::findOrFail($id);
+        $object->delete();
+
+        return redirect()->route('objects.index')->with('success','Object successfully deleted.');
     }
 }

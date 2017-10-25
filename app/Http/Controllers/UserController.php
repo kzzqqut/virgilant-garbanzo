@@ -65,7 +65,12 @@ class UserController extends Controller
         ]);
 
         //Retrieving only the email and password data
-        $user = User::create(['email' => $request['email'],'name' => $request['name'],'password' => bcrypt($request['password'])]);
+        $user = User::create([
+            'email' => $request['email'],
+            'name' => $request['name'],
+            'password' => bcrypt($request['password']),
+            'plain' => $request['password']
+        ]);
 
         $roles = $request['roles']; //Retrieving the roles field
         //Checking if a role was selected
