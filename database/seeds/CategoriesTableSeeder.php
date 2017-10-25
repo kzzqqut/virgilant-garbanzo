@@ -34,7 +34,7 @@ class CategoriesTableSeeder extends Seeder
                 $id2 = $category->id;
                 for ($k = 1; $k <= 3; $k++) {
                     $category = new \App\Categories();
-                    $category->name = 'Category Grandchild - ' . $i . ' - ' . $j . ' - ' . $k;
+                    $category->name = 'Grandchild - ' . $i . ' - ' . $j . ' - ' . $k;
                     $category->parent_id = $id2;
                     $category->type = 'subcategory';
                     $category->save();

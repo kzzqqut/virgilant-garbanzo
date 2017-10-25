@@ -11,10 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
 Route::resource('users', 'UserController');
@@ -26,6 +22,12 @@ Route::resource('permissions', 'PermissionController');
 Route::resource('categories', 'CategoriesController');
 
 //Route::resource('objects', 'ObjectController');
+
+//index
+Route::get('/{cat?}', [
+    'uses' => 'PagesController@index',
+    'as' => 'index'
+]);
 
 Route::get('/objects',[
     'uses' => 'ObjectController@index',

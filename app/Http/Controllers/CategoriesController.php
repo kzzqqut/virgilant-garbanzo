@@ -26,9 +26,8 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $categoryObj = new Categories();
         $categoriesList = Categories::all()->toArray();
-        $categories = $categoryObj->categoriesTree($categoriesList);
+        $categories = Categories::categoriesTree($categoriesList);
 
         return view('admin.categories.index')->with('categories', $categories);
     }
@@ -40,9 +39,8 @@ class CategoriesController extends Controller
      */
     public function create()
     {
-        $categoryObj = new Categories();
         $categoriesList = Categories::all()->toArray();
-        $categories = $categoryObj->categoriesTree($categoriesList);
+        $categories = Categories::categoriesTree($categoriesList);
 
         return view('admin.categories.create',['categories' => $categories]);
     }
@@ -100,9 +98,8 @@ class CategoriesController extends Controller
     public function edit($id)
     {
         $categoryData = Categories::findOrFail($id); //Get category with specified id
-        $categoryObj = new Categories();
         $categoriesList = Categories::all()->except($categoryData->id)->toArray();
-        $categories = $categoryObj->categoriesTree($categoriesList);
+        $categories = Categories::categoriesTree($categoriesList);
 
         return view('admin.categories.edit', compact('categoryData','categories')); //pass category data to view
     }
