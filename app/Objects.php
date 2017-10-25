@@ -12,5 +12,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Objects extends Model
 {
-    //
+    public function photos() {
+        return $this->hasMany('App\Photos','object_id');
+    }
+
+    public function user() {
+        return $this->belongsTo('App\User');
+    }
 }

@@ -8,11 +8,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Currencies;
+use App\Photos;
 use App\Objects;
-use Illuminate\Http\Request;
+use App\Currencies;
 use App\Categories;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Facades\Image;
 
 class ObjectController extends Controller
 {
@@ -108,7 +110,8 @@ class ObjectController extends Controller
             'name' => 'required|min:6|max:120',
             'description' => 'required',
             'price' => 'required|numeric|between:0,999.99',
-            'currency_id' => 'required'
+            'currency_id' => 'required',
+            'photo.*' => 'image|mimes:jpeg,jpg,png,gif'
         ]);
 
         $object = null;
@@ -131,6 +134,44 @@ class ObjectController extends Controller
         $object->currency_id = $request['currency_id'];
 
         $object->save();
+
+        if ($request->hasFile('photo')) {
+            $files = $request->file('photo');
+            $i = 0;
+            foreach ($files as $file) {
+
+                $object->load('photos');
+
+                if ($i > 4 || count($object->photos) > 4) {
+                    break;
+                }
+
+                $image = Image::make($file);
+                $thImage = Image::make($file);
+
+                $image->fit(320,320);
+                $nameImg = uniqid() . '.' . $file->extension();
+
+                $image->save(public_path('images/'.$nameImg));
+
+                $thName = 'th_' . $nameImg;
+                $thImage->fit(100,100);
+                $thImage->save(public_path('images/'.$thName));
+
+                $photo = new Photos();
+                $photo->object_id = $object->id;
+                $photo->name = $nameImg;
+                $photo->th_name = $thName;
+                if ($i == 0) {
+                    $photo->is_main = 1;
+                }
+
+                $photo->save();
+                $i++;
+            }
+
+
+        }
 
         $request->session()->put('object', $object);
 
@@ -199,7 +240,21 @@ class ObjectController extends Controller
             return redirect()->route('objects.manage');
 
         } else {
-            return redirect()->route('objects.manage')->with(['error' => 'Nothing for change. Contact Administrator']);
+            return redirect()->route('objects.manage')->with(['error' => 'Nothing to change. Contact Administrator']);
         }
+    }
+
+    public function photoRemove($id)
+    {
+
+        $photo = Photos::findOrFail($id);
+        if (!empty($photo->object) && !empty($photo->object->user) && ($photo->object->user->id == Auth::user()->id)) {
+            unlink(public_path() . '/images/' . $photo->name);
+            unlink(public_path() . '/images/' . $photo->th_name);
+            $photo->forceDelete();
+            return redirect()->route('objects.manage', ['id' => $photo->object->id])->with(['success' => 'Photo removed']);
+        }
+
+        return redirect()->back();
     }
 }

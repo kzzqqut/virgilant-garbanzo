@@ -46,3 +46,8 @@ Route::get('/objects/category/change/{type}',[
     'uses' => 'ObjectController@changeCategory',
     'as' => 'objects.category.change'
 ]);
+
+Route::get('/objects/photo/remove/{id}',[
+    'uses' => 'ObjectController@photoRemove',
+    'as' => 'objects.photo.remove'
+]);

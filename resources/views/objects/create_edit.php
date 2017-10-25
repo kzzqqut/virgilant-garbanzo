@@ -77,7 +77,7 @@
                         @endif
                     </form>
 
-                    <form method="post" action="{{ route('objects.post.manage') }}" class="form-horizontal">
+                    <form method="post" action="{{ !empty($object->id) ? route('objects.post.manage',['id' => $object->id]) : route('objects.post.manage') }}" class="form-horizontal" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }}">
                             <label class="col-md-3 control-label" for="name">Name</label>
@@ -120,16 +120,33 @@
                             <div class="col-md-6">
                                 <select name="currency_id" class="form-control">
                                     @foreach($currencies as $currency)
-                                    <option {{ !empty($object->currency_id) && $object->currency_id == $currency->id ? 'selected' : '' }} value="{{ $currency->id }}">{{ $currency->name }}</option>
+                                        <option {{ !empty($object->currency_id) && $object->currency_id == $currency->id ? 'selected' : '' }} value="{{ $currency->id }}">{{ $currency->name }}</option>
                                     @endforeach
                                 </select>
                                 @if ($errors->has('currency_id'))
-                                <span class="help-block">
+                                    <span class="help-block">
                                         <strong>{{ $errors->first('currency_id') }}</strong>
                                     </span>
                                 @endif
                             </div>
                         </div>
+
+                        <div class="form-group {{ $errors->has('photo') ? ' has-error' : '' }}">
+                            <label class="col-md-3 control-label" for="photo">Photos</label>
+                            <div class="col-md-6">
+                                <input type="file" name="photo[]" multiple>
+                                @if ($errors->has('photo'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('photo') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        @if (!empty($object->photos) && count($object->photos) > 0)
+                            @foreach($object->photos as $photo)
+                                <img src="/images/{{ $photo->th_name }}"> <a href="{{ route('objects.photo.remove',['id' => $photo->id]) }}" class="btn-sm">Remove</a>
+                            @endforeach
+                        @endif
 
                         <div class="form-group">
                             <div class="col-md-9 pull-right">
