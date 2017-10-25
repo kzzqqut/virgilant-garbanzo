@@ -32,63 +32,58 @@
 
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
 
+                <!-- Left Side Of Navbar -->
+                <ul class="nav navbar-nav">
+                    @if (!Auth::guest())
+                        <li><a href="{{ route('objects.create') }}">New Object</a></li>
+                    @endif
+                </ul>
+
                 <!-- Right Side Of Navbar -->
                 <ul class="nav navbar-nav navbar-right">
-                    <!-- Authentication Links -->
-                    @if (Auth::guest())
-                        <li><a href="{{ route('login') }}">Login</a></li>
-                        <li><a href="{{ route('register') }}">Register</a></li>
-                    @else
+                    @if (!Auth::guest())
                         <li style="padding-top: 12px;">
-                            Hello {{ Auth::user()->name }}
+                            Hello  {{ Auth::user()->name }}
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: inline">
                                 {{ csrf_field() }}
                                 <button type="submit" class="btn-link">Logout</button>
                             </form>
                         </li>
+
                     @endif
                 </ul>
+
             </div>
         </div>
     </nav>
 
     @if(Session::has('success'))
         <div class="container">
-            <div class="alert alert-success"><em> {!! session('success') !!}</em></div>
-        </div>
-    @endif
-
-    {{--
-    @if(Session::has('errors'))
-        <div class="container">
-            <div class="alert alert-success"><em> {!! session('errors') !!}</em>
+            <div class="alert alert-success"><em> {!! session('success') !!}</em>
             </div>
         </div>
     @endif
-    --}}
 
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            @include ('errors.list') {{-- Including error file --}}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                @include ('errors.list') {{-- Including error file --}}
+            </div>
         </div>
     </div>
 
     <div class="container">
         <div class="row">
-            @if (!Auth::guest())
-                <div class="col-md-2">
-                    @include('layouts.admin_navigation')
-                </div>
-            @endif
-            <div class="col-md-10">
+            <div class="col-md-12">
                 @yield('content')
             </div>
         </div>
+
     </div>
+
+
 
 </div>
 
-<!-- Scripts -->
-<!-- <script src="{{ asset('js/app.js') }}"></script> -->
 </body>
 </html>

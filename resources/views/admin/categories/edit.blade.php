@@ -6,10 +6,10 @@
 
     <div class='row'>
         <div class="col-md-6">
-            <h1> Edit {{$category->name}}</h1>
+            <h1> Edit {{$categoryData->name}}</h1>
             <hr>
 
-            {{ Form::model($category, array('route' => array('categories.update', $category->id), 'method' => 'PUT')) }}
+            {{ Form::model($categoryData, array('route' => array('categories.update', $categoryData->id), 'method' => 'PUT')) }}
             {{-- Form model binding to automatically populate our fields with user data --}}
 
             <div class="form-group">
@@ -18,15 +18,13 @@
             </div>
 
             <div class="form-group">
-                {{ Form::label('parent_id', 'Parent category') }}
-                {{ Form::select('parent_id',[
-                    '0' => 'none',
-                    '1' => 'Main',
-                    'main' => $main,
-                    '2' => 'Default',
-                    'default' => $default,
-                    ],null, ['class' => 'form-control'])
-                }}
+                {{ Form::label('parent_id', 'Parent category',['class' => 'control-label']) }}
+                <select class="form-control" name="parent_id">
+                    <option value="0">none</option>
+                    @foreach ($categories as $category)
+                        @include('admin.partials.category_select', ['category' => $category,'categoryData' => $categoryData])
+                    @endforeach
+                </select>
             </div>
 
             {{ Form::submit('Edit', array('class' => 'btn btn-primary')) }}

@@ -16,14 +16,13 @@
             </div>
 
             <div class="form-group">
-                {{ Form::label('parent_id', 'Parent category') }}
-                {{ Form::select('parent_id',[
-                    '1' => 'Main',
-                    'main' => $main,
-                    '2' => 'Default',
-                    'default' => $default,
-                    ],null, ['class' => 'form-control'])
-                }}
+                {{ Form::label('parent_id', 'Parent category',['class' => 'control-label']) }}
+                <select class="form-control" name="parent_id">
+                    <option value="0">none</option>
+                        @foreach ($categories as $category)
+                            @include('admin.partials.category_select', $category)
+                        @endforeach
+                </select>
             </div>
 
             {{ Form::submit('Add', array('class' => 'btn btn-primary')) }}

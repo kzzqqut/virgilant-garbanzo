@@ -7,6 +7,8 @@
  */
 
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UsersTableSeeder extends Seeder
 {
@@ -20,8 +22,38 @@ class UsersTableSeeder extends Seeder
         $user = new \App\User();
         $user->name = 'admin';
         $user->email = 'admin@example.org';
-        $user->password = bcrypt('qwerty13');
-        $user->plain = 'qwerty13';
+        $user->password = bcrypt('qwerty123');
+        $user->plain = 'qwerty123';
         $user->save();
+
+        $permission = new Permission();
+        $permission->name = 'Roles & Permissions';
+        $permission->save();
+
+        $role = new Role();
+        $role->name = 'Admin';
+        $role->save();
+        $role->givePermissionTo($permission);
+
+        $user->assignRole($role);
+
+
+        $user = new \App\User();
+        $user->name = 'SimpleUser';
+        $user->email = 'user@example.org';
+        $user->password = bcrypt('qwerty123');
+        $user->plain = 'qwerty123';
+        $user->save();
+
+        $permission = new Permission();
+        $permission->name = 'Manage objects';
+        $permission->save();
+
+        $role = new Role();
+        $role->name = 'VerifiedUser';
+        $role->save();
+        $role->givePermissionTo($permission);
+
+        $user->assignRole($role);
     }
 }

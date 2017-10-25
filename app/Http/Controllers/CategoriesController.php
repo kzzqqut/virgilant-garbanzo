@@ -40,10 +40,11 @@ class CategoriesController extends Controller
      */
     public function create()
     {
-        $main = Categories::where('parent_id',1)->get()->pluck('name','id')->toArray();
-        $default = Categories::where('parent_id',2)->get()->pluck('name','id')->toArray();
+        $categoryObj = new Categories();
+        $categoriesList = Categories::all()->toArray();
+        $categories = $categoryObj->categoriesTree($categoriesList);
 
-        return view('admin.categories.create',['main' => $main,'default' => $default]);
+        return view('admin.categories.create',['categories' => $categories]);
     }
 
     /**
@@ -98,11 +99,12 @@ class CategoriesController extends Controller
      */
     public function edit($id)
     {
-        $category = Categories::findOrFail($id); //Get category with specified id
-        $main = Categories::where('parent_id',1)->get()->pluck('name','id')->toArray();
-        $default = Categories::where('parent_id',2)->get()->pluck('name','id')->toArray();
+        $categoryData = Categories::findOrFail($id); //Get category with specified id
+        $categoryObj = new Categories();
+        $categoriesList = Categories::all()->except($categoryData->id)->toArray();
+        $categories = $categoryObj->categoriesTree($categoriesList);
 
-        return view('admin.categories.edit', compact('category','main','default')); //pass category data to view
+        return view('admin.categories.edit', compact('categoryData','categories')); //pass category data to view
     }
 
     /**
